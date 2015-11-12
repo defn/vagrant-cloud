@@ -21,7 +21,7 @@ module VagrantPlugins
           return :not_created if machine.id.nil?
 
           # Find the machine
-          server = aws.servers.get(machine.id)
+          server = JSON.load(%x{vagrant-shell get-instance '#{machine.id}'})
           if server.nil? || [:"shutting-down", :terminated].include?(server.state.to_sym)
             # The machine can't be found
             @logger.info("Machine not found or terminated, assuming it got destroyed.")

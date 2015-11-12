@@ -21,7 +21,7 @@ module VagrantPlugins
           return nil if machine.id.nil?
 
           # Find the machine
-          server = aws.servers.get(machine.id)
+          server = JSON.load(%x{vagrant-shell get-instance '#{machine.id}'})
           if server.nil?
             # The machine can't be found
             @logger.info("Machine couldn't be found, assuming it got destroyed.")
