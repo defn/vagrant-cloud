@@ -36,8 +36,7 @@ module VagrantPlugins
           fog_config[:version]  = region_config.version if region_config.version
 
           @logger.info("Connecting to AWS...")
-          env[:aws_compute] = "Fog::Compute.new(fog_config)"
-          env[:aws_elb]     = "Fog::AWS::ELB.new(fog_config.except(:provider, :endpoint))"
+          env[:aws_compute] = JSON.load(%x{vagrant-shell connect-to-cloud})
 
           @app.call(env)
         end
