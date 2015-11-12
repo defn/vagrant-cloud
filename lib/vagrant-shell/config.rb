@@ -278,9 +278,9 @@ module VagrantPlugins
       def finalize!
         # Try to get access keys from standard AWS environment variables; they
         # will default to nil if the environment variables are not present.
-        @access_key_id     = ENV['AWS_ACCESS_KEY'] if @access_key_id     == UNSET_VALUE
-        @secret_access_key = ENV['AWS_SECRET_KEY'] if @secret_access_key == UNSET_VALUE
-        @session_token     = ENV['AWS_SESSION_TOKEN'] if @session_token == UNSET_VALUE
+        @access_key_id     = ENV['_ACCESS_KEY'] if @access_key_id     == UNSET_VALUE
+        @secret_access_key = ENV['_SECRET_KEY'] if @secret_access_key == UNSET_VALUE
+        @session_token     = ENV['_SESSION_TOKEN'] if @session_token == UNSET_VALUE
 
         # AMI must be nil, since we can't default that
         @ami = nil if @ami == UNSET_VALUE
@@ -378,7 +378,7 @@ module VagrantPlugins
       def validate(machine)
         errors = _detected_errors
 
-        errors << I18n.t("vagrant_aws.config.region_required") if @region.nil?
+        errors << I18n.t("vagrant_shell.config.region_required") if @region.nil?
 
         if @region
           # Get the configuration for the region we're using and validate only
@@ -386,20 +386,20 @@ module VagrantPlugins
           config = get_region_config(@region)
 
           if !config.use_iam_profile
-            errors << I18n.t("vagrant_aws.config.access_key_id_required") if \
+            errors << I18n.t("vagrant_shell.config.access_key_id_required") if \
               config.access_key_id.nil?
-            errors << I18n.t("vagrant_aws.config.secret_access_key_required") if \
+            errors << I18n.t("vagrant_shell.config.secret_access_key_required") if \
               config.secret_access_key.nil?
           end
 
           if config.associate_public_ip && !config.subnet_id
-            errors << I18n.t("vagrant_aws.config.subnet_id_required_with_public_ip")
+            errors << I18n.t("vagrant_shell.config.subnet_id_required_with_public_ip")
           end
 
-          errors << I18n.t("vagrant_aws.config.ami_required", :region => @region)  if config.ami.nil?
+          errors << I18n.t("vagrant_shell.config.ami_required", :region => @region)  if config.ami.nil?
         end
 
-        { "AWS Provider" => errors }
+        { "Shell Provider" => errors }
       end
 
       # This gets the configuration for a specific region. It shouldn't

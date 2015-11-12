@@ -13,7 +13,7 @@ module VagrantPlugins
 
         def initialize(app, env)
           @app    = app
-          @logger = Log4r::Logger.new("vagrant_aws::action::start_instance")
+          @logger = Log4r::Logger.new("vagrant_shell::action::start_instance")
         end
 
         def call(env)
@@ -22,7 +22,7 @@ module VagrantPlugins
 
           server = JSON.load(%x{vagrant-shell get-instance '#{env[:machine].id}'})
 
-          env[:ui].info(I18n.t("vagrant_aws.starting"))
+          env[:ui].info(I18n.t("vagrant_shell.starting"))
 
           begin
             server.start
@@ -34,7 +34,7 @@ module VagrantPlugins
             env[:metrics]["instance_ready_time"] = Util::Timer.time do
                 tries = region_config.instance_ready_timeout / 2
 
-              env[:ui].info(I18n.t("vagrant_aws.waiting_for_ready"))
+              env[:ui].info(I18n.t("vagrant_shell.waiting_for_ready"))
               begin
                 retryable(:on => Shell::Errors::TimeoutError, :tries => tries) do
                   # If we're interrupted don't worry about waiting
@@ -58,7 +58,7 @@ module VagrantPlugins
           if !env[:interrupted]
             env[:metrics]["instance_ssh_time"] = Util::Timer.time do
               # Wait for SSH to be ready.
-              env[:ui].info(I18n.t("vagrant_aws.waiting_for_ssh"))
+              env[:ui].info(I18n.t("vagrant_shell.waiting_for_ssh"))
               while true
                 # If we're interrupted then just back out
                 break if env[:interrupted]
@@ -70,7 +70,7 @@ module VagrantPlugins
             @logger.info("Time for SSH ready: #{env[:metrics]["instance_ssh_time"]}")
 
             # Ready and booted!
-            env[:ui].info(I18n.t("vagrant_aws.ready"))
+            env[:ui].info(I18n.t("vagrant_shell.ready"))
           end
 
           @app.call(env)

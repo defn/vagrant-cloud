@@ -7,16 +7,16 @@ module VagrantPlugins
       class StopInstance
         def initialize(app, env)
           @app    = app
-          @logger = Log4r::Logger.new("vagrant_aws::action::stop_instance")
+          @logger = Log4r::Logger.new("vagrant_shell::action::stop_instance")
         end
 
         def call(env)
           server = JSON.load(%x{vagrant-shell get-instance '#{env[:machine].id}'})
 
           if env[:machine].state.id == :stopped
-            env[:ui].info(I18n.t("vagrant_aws.already_status", :status => env[:machine].state.id))
+            env[:ui].info(I18n.t("vagrant_shell.already_status", :status => env[:machine].state.id))
           else
-            env[:ui].info(I18n.t("vagrant_aws.stopping"))
+            env[:ui].info(I18n.t("vagrant_shell.stopping"))
             server.stop(!!env[:force_halt])
           end
 

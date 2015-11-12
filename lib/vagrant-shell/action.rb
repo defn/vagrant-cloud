@@ -18,7 +18,7 @@ module VagrantPlugins
               next
             end
 
-            b2.use ConnectAWS
+            b2.use ConnectCloud
             b2.use StopInstance
           end
         end
@@ -35,7 +35,7 @@ module VagrantPlugins
                   b3.use MessageNotCreated
                   next
                 end
-                b3.use ConnectAWS
+                b3.use ConnectCloud
                 b3.use TerminateInstance
                 b3.use ProvisionerCleanup if defined?(ProvisionerCleanup)
               end
@@ -67,7 +67,7 @@ module VagrantPlugins
       def self.action_read_ssh_info
         Vagrant::Action::Builder.new.tap do |b|
           b.use ConfigValidate
-          b.use ConnectAWS
+          b.use ConnectCloud
           b.use ReadSSHInfo
         end
       end
@@ -78,7 +78,7 @@ module VagrantPlugins
       def self.action_read_state
         Vagrant::Action::Builder.new.tap do |b|
           b.use ConfigValidate
-          b.use ConnectAWS
+          b.use ConnectCloud
           b.use ReadState
         end
       end
@@ -126,7 +126,7 @@ module VagrantPlugins
           b.use HandleBox
           b.use ConfigValidate
           b.use BoxCheckOutdated
-          b.use ConnectAWS
+          b.use ConnectCloud
           b.use Call, IsCreated do |env1, b1|
             if env1[:result]
               b1.use Call, IsStopped do |env2, b2|
@@ -148,7 +148,7 @@ module VagrantPlugins
       def self.action_reload
         Vagrant::Action::Builder.new.tap do |b|
           b.use ConfigValidate
-          b.use ConnectAWS
+          b.use ConnectCloud
           b.use Call, IsCreated do |env, b2|
             if !env[:result]
               b2.use MessageNotCreated
@@ -169,7 +169,7 @@ module VagrantPlugins
 
       # The autoload farm
       action_root = Pathname.new(File.expand_path("../action", __FILE__))
-      autoload :ConnectAWS, action_root.join("connect_aws")
+      autoload :ConnectCloud, action_root.join("connect_cloud")
       autoload :IsCreated, action_root.join("is_created")
       autoload :IsStopped, action_root.join("is_stopped")
       autoload :MessageAlreadyCreated, action_root.join("message_already_created")

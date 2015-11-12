@@ -14,7 +14,7 @@ module VagrantPlugins
 
         def initialize(app, env)
           @app    = app
-          @logger = Log4r::Logger.new("vagrant_aws::action::run_instance")
+          @logger = Log4r::Logger.new("vagrant_shell::action::run_instance")
         end
 
         def call(env)
@@ -49,16 +49,16 @@ module VagrantPlugins
 
           # If there is no keypair then warn the user
           if !keypair
-            env[:ui].warn(I18n.t("vagrant_aws.launch_no_keypair"))
+            env[:ui].warn(I18n.t("vagrant_shell.launch_no_keypair"))
           end
 
           # If there is a subnet ID then warn the user
           if subnet_id && !elastic_ip
-            env[:ui].warn(I18n.t("vagrant_aws.launch_vpc_warning"))
+            env[:ui].warn(I18n.t("vagrant_shell.launch_vpc_warning"))
           end
 
           # Launch!
-          env[:ui].info(I18n.t("vagrant_aws.launching_instance"))
+          env[:ui].info(I18n.t("vagrant_shell.launching_instance"))
           env[:ui].info(" -- Type: #{instance_type}")
           env[:ui].info(" -- AMI: #{ami}")
           env[:ui].info(" -- Region: #{region}")
@@ -104,7 +104,7 @@ module VagrantPlugins
           if !security_groups.empty?
             security_group_key = options[:subnet_id].nil? ? :groups : :security_group_ids
             options[security_group_key] = security_groups
-            env[:ui].warn(I18n.t("vagrant_aws.warn_ssh_access")) unless allows_ssh_port?(env, security_groups, subnet_id)
+            env[:ui].warn(I18n.t("vagrant_shell.warn_ssh_access")) unless allows_ssh_port?(env, security_groups, subnet_id)
           end
 
           begin
@@ -133,7 +133,7 @@ module VagrantPlugins
           env[:metrics]["instance_ready_time"] = Util::Timer.time do
             tries = region_config.instance_ready_timeout / 2
 
-            env[:ui].info(I18n.t("vagrant_aws.waiting_for_ready"))
+            env[:ui].info(I18n.t("vagrant_shell.waiting_for_ready"))
             begin
               retryable(:on => Shell::Errors::TimeoutError, :tries => tries) do
                 # If we're interrupted don't worry about waiting
@@ -163,7 +163,7 @@ module VagrantPlugins
           # Set the source destination checks
           if !source_dest_check.nil?
             if server.vpc_id.nil?
-                env[:ui].warn(I18n.t("vagrant_aws.source_dest_checks_no_vpc"))
+                env[:ui].warn(I18n.t("vagrant_shell.source_dest_checks_no_vpc"))
             else
                 begin
                     attrs = {
@@ -179,7 +179,7 @@ module VagrantPlugins
           if !env[:interrupted]
             env[:metrics]["instance_ssh_time"] = Util::Timer.time do
               # Wait for SSH to be ready.
-              env[:ui].info(I18n.t("vagrant_aws.waiting_for_ssh"))
+              env[:ui].info(I18n.t("vagrant_shell.waiting_for_ssh"))
               network_ready_retries = 0
               network_ready_retries_max = 10
               while true
@@ -192,7 +192,7 @@ module VagrantPlugins
                 rescue Exception => e
                   if network_ready_retries < network_ready_retries_max then
                     network_ready_retries += 1
-                    @logger.warn(I18n.t("vagrant_aws.waiting_for_ssh, retrying"))
+                    @logger.warn(I18n.t("vagrant_shell.waiting_for_ssh, retrying"))
                   else
                     raise e
                   end
@@ -204,7 +204,7 @@ module VagrantPlugins
             @logger.info("Time for SSH ready: #{env[:metrics]["instance_ssh_time"]}")
 
             # Ready and booted!
-            env[:ui].info(I18n.t("vagrant_aws.ready"))
+            env[:ui].info(I18n.t("vagrant_shell.ready"))
           end
 
           # Terminate the instance if we were interrupted

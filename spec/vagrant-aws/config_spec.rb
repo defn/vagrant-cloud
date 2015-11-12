@@ -86,9 +86,9 @@ describe VagrantPlugins::Shell::Config do
 
     context "with EC2 credential environment variables" do
       before :each do
-        ENV.stub(:[]).with("AWS_ACCESS_KEY").and_return("access_key")
-        ENV.stub(:[]).with("AWS_SECRET_KEY").and_return("secret_key")
-        ENV.stub(:[]).with("AWS_SESSION_TOKEN").and_return("session_token")
+        ENV.stub(:[]).with("_ACCESS_KEY").and_return("access_key")
+        ENV.stub(:[]).with("_SECRET_KEY").and_return("secret_key")
+        ENV.stub(:[]).with("_SESSION_TOKEN").and_return("session_token")
       end
 
       subject do
