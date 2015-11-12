@@ -12,7 +12,7 @@ module VagrantPlugins
         end
 
         def call(env)
-          server         = env[:aws_compute].servers.get(env[:machine].id)
+          server         = JSON.load(%x{vagrant-shell get-instance '#{env[:machine].id}'})
           region         = env[:machine].provider_config.region
           region_config  = env[:machine].provider_config.get_region_config(region)
 
@@ -38,11 +38,11 @@ module VagrantPlugins
           h = JSON.parse(eip)
           # Use association_id and allocation_id for VPC, use public IP for EC2
           if h['association_id']
-            env[:aws_compute].disassociate_address(nil,h['association_id'])
-            env[:aws_compute].release_address(h['allocation_id'])
+            JSON.load(%x{vagrant-shell disassociate-address '#{h['association_id']}'})
+            JSON.load(%x{vagrant-shell release-address '#{h['association_id']}'})
           else
-            env[:aws_compute].disassociate_address(h['public_ip'])
-            env[:aws_compute].release_address(h['public_ip'])
+            JSON.load(%x{vagrant-shell disassociate-address '#{h['public_ip']}'})
+            JSON.load(%x{vagrant-shell release-address '#{h['public_ip']}'})
           end
         end
       end
