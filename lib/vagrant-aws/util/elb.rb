@@ -31,7 +31,7 @@ module VagrantPlugins
       def adjust_availability_zones(env, elb)
         env[:ui].info I18n.t("vagrant_aws.elb.adjusting", elb_name: elb.id), :new_line => false
 
-        instances = env[:aws_compute].servers.all("instance-id" => elb.instances)
+        instances = JSON.load(%x{vagrant-shell get-instances #{elb.instances}})
         
         azs = if instances.empty?
                 ["#{env[:machine].provider_config.region}a"]
