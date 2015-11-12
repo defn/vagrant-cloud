@@ -1,6 +1,5 @@
 $:.unshift File.expand_path("../lib", __FILE__)
 require "vagrant-aws/version"
-require "pp"
 
 Gem::Specification.new do |s|
   s.name          = "vagrant-aws"
@@ -9,12 +8,11 @@ Gem::Specification.new do |s|
   s.license       = "MIT"
   s.authors       = "Mitchell Hashimoto"
   s.email         = "mitchell@hashicorp.com"
-  s.homepage      = "http://www.vagrantup.com"
-  s.summary       = "Vagrant provider shell based on vagrant-aws"
-  s.description   = "Vagrant provider shell based on vagrant-aws"
+  s.homepage      = "https://github.com/defn/vagrant-shell"
+  s.summary       = "Vagrant provider using shell-scripts"
+  s.description   = "Vagrant provider using shell-scripts (based on vagrant-aws)"
 
   s.required_rubygems_version = ">= 1.3.6"
-  s.rubyforge_project         = "vagrant-aws"
 
   s.add_development_dependency "rake"
   s.add_development_dependency "rspec", "~> 2.12"
