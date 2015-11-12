@@ -81,18 +81,6 @@ module VagrantPlugins
       # @return [Array<String>]
       attr_reader :security_groups
 
-      # The Amazon resource name (ARN) of the IAM Instance Profile
-      # to associate with the instance.
-      #
-      # @return [String]
-      attr_accessor :iam_instance_profile_arn
-
-      # The name of the IAM Instance Profile to associate with
-      # the instance.
-      #
-      # @return [String]
-      attr_accessor :iam_instance_profile_name
-
       # The subnet ID to launch the machine into (VPC).
       #
       # @return [String]
@@ -102,12 +90,6 @@ module VagrantPlugins
       #
       # @return [Hash<String, String>]
       attr_accessor :tags
-
-      # Use IAM Instance Role for authentication to AWS instead of an
-      # explicit access_id and secret_access_key
-      #
-      # @return [Boolean]
-      attr_accessor :use_iam_profile
 
       # The user data string
       #
@@ -183,11 +165,8 @@ module VagrantPlugins
         @subnet_id                 = UNSET_VALUE
         @tags                      = {}
         @user_data                 = UNSET_VALUE
-        @use_iam_profile           = UNSET_VALUE
         @block_device_mapping      = []
         @elastic_ip                = UNSET_VALUE
-        @iam_instance_profile_arn  = UNSET_VALUE
-        @iam_instance_profile_name = UNSET_VALUE
         @terminate_on_shutdown     = UNSET_VALUE
         @ssh_host_attribute        = UNSET_VALUE
         @monitoring                = UNSET_VALUE
@@ -316,13 +295,6 @@ module VagrantPlugins
         # Subnet is nil by default otherwise we'd launch into VPC.
         @subnet_id = nil if @subnet_id == UNSET_VALUE
 
-        # IAM Instance profile arn/name is nil by default.
-        @iam_instance_profile_arn   = nil if @iam_instance_profile_arn  == UNSET_VALUE
-        @iam_instance_profile_name  = nil if @iam_instance_profile_name == UNSET_VALUE
-
-        # By default we don't use an IAM profile
-        @use_iam_profile = false if @use_iam_profile == UNSET_VALUE
-
         # User Data is nil by default
         @user_data = nil if @user_data == UNSET_VALUE
 
@@ -385,12 +357,10 @@ module VagrantPlugins
           # that region.
           config = get_region_config(@region)
 
-          if !config.use_iam_profile
-            errors << I18n.t("vagrant_shell.config.access_key_id_required") if \
-              config.access_key_id.nil?
-            errors << I18n.t("vagrant_shell.config.secret_access_key_required") if \
-              config.secret_access_key.nil?
-          end
+          errors << I18n.t("vagrant_shell.config.access_key_id_required") if \
+            config.access_key_id.nil?
+          errors << I18n.t("vagrant_shell.config.secret_access_key_required") if \
+            config.secret_access_key.nil?
 
           if config.associate_public_ip && !config.subnet_id
             errors << I18n.t("vagrant_shell.config.subnet_id_required_with_public_ip")

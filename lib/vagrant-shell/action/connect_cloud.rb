@@ -22,13 +22,9 @@ module VagrantPlugins
             :provider => :aws,
             :region   => region
           }
-          if region_config.use_iam_profile
-            fog_config[:use_iam_profile] = true
-          else
-            fog_config[:aws_access_key_id] = region_config.access_key_id
-            fog_config[:aws_secret_access_key] = region_config.secret_access_key
-            fog_config[:aws_session_token] = region_config.session_token
-          end
+          fog_config[:aws_access_key_id] = region_config.access_key_id
+          fog_config[:aws_secret_access_key] = region_config.secret_access_key
+          fog_config[:aws_session_token] = region_config.session_token
 
           fog_config[:endpoint] = region_config.endpoint if region_config.endpoint
           fog_config[:version]  = region_config.version if region_config.version

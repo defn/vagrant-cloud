@@ -29,11 +29,8 @@ describe VagrantPlugins::Shell::Config do
     its("session_token") { should be_nil }
     its("security_groups")   { should == [] }
     its("subnet_id")         { should be_nil }
-    its("iam_instance_profile_arn") { should be_nil }
-    its("iam_instance_profile_name") { should be_nil }
     its("tags")              { should == {} }
     its("user_data")         { should be_nil }
-    its("use_iam_profile")   { should be false }
     its("block_device_mapping")  {should == [] }
     its("elastic_ip")        { should be_nil }
     its("terminate_on_shutdown") { should == false }
@@ -54,8 +51,8 @@ describe VagrantPlugins::Shell::Config do
       :instance_type, :keypair_name, :ssh_host_attribute,
       :ebs_optimized, :region, :secret_access_key, :session_token, :monitoring,
       :associate_public_ip, :subnet_id, :tags, :elastic_ip,
-      :terminate_on_shutdown, :iam_instance_profile_arn, :iam_instance_profile_name,
-      :use_iam_profile, :user_data, :block_device_mapping,
+      :terminate_on_shutdown, 
+      :user_data, :block_device_mapping,
       :source_dest_check].each do |attribute|
 
       it "should not default #{attribute} if overridden" do
