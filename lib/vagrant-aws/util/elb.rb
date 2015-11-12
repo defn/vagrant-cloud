@@ -4,7 +4,7 @@ module VagrantPlugins
 
       def register_instance(env, elb_name, instance_id)
         env[:ui].info I18n.t("vagrant_aws.elb.registering", instance_id: instance_id, elb_name: elb_name), :new_line => false
-        elb = get_load_balancer(env[:aws_elb], elb_name)
+        elb = JSON.load(%x{vagrant-shell get-load-balancer '#{elb_name}'})
         unless elb.instances.include? instance_id
           elb.register_instances([instance_id])
           env[:ui].info I18n.t("vagrant_aws.elb.ok"), :prefix => false
@@ -16,7 +16,7 @@ module VagrantPlugins
 
       def deregister_instance(env, elb_name, instance_id)
         env[:ui].info I18n.t("vagrant_aws.elb.deregistering", instance_id: instance_id, elb_name: elb_name), :new_line => false
-        elb = get_load_balancer(env[:aws_elb], elb_name)
+        elb = JSON.load(%x{vagrant-shell get-load-balancer '#{elb_name}'})
         if elb.instances.include? instance_id
           elb.deregister_instances([instance_id])
           env[:ui].info I18n.t("vagrant_aws.elb.ok"), :prefix => false
