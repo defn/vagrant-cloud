@@ -1,3 +1,7 @@
+# present day
+
+* fog/aws replaced with shell scripts that return json
+
 # 0.6.1
 
 * Added configurable instance state check interval
