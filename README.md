@@ -1,5 +1,7 @@
 This plugin provides a shell-script provider based on a gutted
 vagrant-aws plugin.  Instead of calling to fog, it executes scripts.
+Machine configuration are exported as enviroment variables before
+calling the scripts.
 
 # Getting Started
 Install dependencies with bundler: `bundle install --path vendor/bundle`
