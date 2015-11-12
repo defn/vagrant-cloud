@@ -3,10 +3,10 @@ require 'json'
 
 require 'vagrant/util/retryable'
 
-require 'vagrant-aws/util/timer'
+require 'vagrant-shell/util/timer'
 
 module VagrantPlugins
-  module AWS
+  module Shell
     module Action
       # This runs the configured instance.
       class RunInstance

@@ -1,13 +1,13 @@
 module VagrantPlugins
-  module AWS
+  module Shell
     module Action
-      class MessageWillNotDestroy
+      class MessageAlreadyCreated
         def initialize(app, env)
           @app = app
         end
 
         def call(env)
-          env[:ui].info(I18n.t("vagrant_aws.will_not_destroy", name: env[:machine].name))
+          env[:ui].info(I18n.t("vagrant_aws.already_status", :status => "created"))
           @app.call(env)
         end
       end

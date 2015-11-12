@@ -1,9 +1,9 @@
 $:.unshift File.expand_path("../lib", __FILE__)
-require "vagrant-aws/version"
+require "vagrant-shell/version"
 
 Gem::Specification.new do |s|
   s.name          = "vagrant-shell"
-  s.version       = VagrantPlugins::AWS::VERSION
+  s.version       = VagrantPlugins::Shell::VERSION
   s.platform      = Gem::Platform::RUBY
   s.license       = "MIT"
   s.authors       = "Mitchell Hashimoto"

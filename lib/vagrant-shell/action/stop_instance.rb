@@ -1,7 +1,7 @@
 require "log4r"
 
 module VagrantPlugins
-  module AWS
+  module Shell
     module Action
       # This stops the running instance.
       class StopInstance

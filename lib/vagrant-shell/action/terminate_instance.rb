@@ -2,7 +2,7 @@ require "log4r"
 require "json"
 
 module VagrantPlugins
-  module AWS
+  module Shell
     module Action
       # This terminates the running instance.
       class TerminateInstance
