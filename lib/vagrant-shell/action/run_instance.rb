@@ -109,7 +109,7 @@ module VagrantPlugins
 
           begin
             server = JSON.load(%x{vagrant-shell create-instance #{options}})
-          rescue Shell::Compute::NotFound => e
+          rescue Shell::Errors::NotFound => e
             # Invalid subnet doesn't have its own error so we catch and
             # check the error message here.
             if e.message =~ /subnet ID/
@@ -118,7 +118,7 @@ module VagrantPlugins
             end
 
             raise
-          rescue Shell::Compute::Error => e
+          rescue Shell::Errors::Error => e
             raise Errors::FogError, :message => e.message
           rescue Excon::Errors::HTTPStatusError => e
             raise Errors::InternalFogError,
@@ -170,7 +170,7 @@ module VagrantPlugins
                         "SourceDestCheck.Value" => source_dest_check
                     }
                     JSON.load(%x{vagrant-shell modify-instance-attribute #{server.id} #{attrs}})
-                rescue Shell::Compute::Error => e
+                rescue Shell::Errors::Error => e
                     raise Errors::FogError, :message => e.message
                 end
             end

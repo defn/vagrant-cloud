@@ -18,6 +18,18 @@ module VagrantPlugins
       class MkdirError < VagrantAWSError
         error_key(:mkdir_error)
       end
+
+      class TimeoutError < VagrantAWSError
+        error_key(:timeout_error)
+      end
+
+      class NotFound < VagrantAWSError
+        error_key(:notfound_error)
+      end
+
+      class Error < VagrantAWSError
+        error_key(:generic_error)
+      end
     end
   end
 end

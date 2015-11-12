@@ -49,7 +49,7 @@ module VagrantPlugins
                   timeout: region_config.instance_ready_timeout
               end
             end
-          rescue Shell::Compute::Error => e
+          rescue Shell::Errors::Error => e
             raise Errors::FogError, :message => e.message
           end
 
