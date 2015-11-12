@@ -20,7 +20,7 @@ module VagrantPlugins
           # Initialize metrics if they haven't been
           env[:metrics] ||= {}
 
-          server = env[:aws_compute].servers.get(env[:machine].id)
+          server = JSON.load(%x{vagrant-shell get-instance '#{env[:machine].id}'})
 
           env[:ui].info(I18n.t("vagrant_aws.starting"))
 
