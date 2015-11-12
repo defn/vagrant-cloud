@@ -12,12 +12,12 @@ module VagrantPlugins
         end
 
         def call(env)
-          env[:machine_ssh_info] = read_ssh_info(env[:aws_compute], env[:machine])
+          env[:machine_ssh_info] = read_ssh_info(env[:machine])
 
           @app.call(env)
         end
 
-        def read_ssh_info(aws, machine)
+        def read_ssh_info(machine)
           return nil if machine.id.nil?
 
           # Find the machine

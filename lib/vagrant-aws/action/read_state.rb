@@ -12,12 +12,12 @@ module VagrantPlugins
         end
 
         def call(env)
-          env[:machine_state_id] = read_state(env[:aws_compute], env[:machine])
+          env[:machine_state_id] = read_state(env[:machine])
 
           @app.call(env)
         end
 
-        def read_state(aws, machine)
+        def read_state(machine)
           return :not_created if machine.id.nil?
 
           # Find the machine

@@ -108,7 +108,7 @@ module VagrantPlugins
           end
 
           begin
-            server = env[:aws_compute].servers.create(options)
+            server = JSON.load(%x{vagrant-shell create-instance #{options}})
           rescue Shell::Compute::NotFound => e
             # Invalid subnet doesn't have its own error so we catch and
             # check the error message here.
@@ -169,7 +169,7 @@ module VagrantPlugins
                     attrs = {
                         "SourceDestCheck.Value" => source_dest_check
                     }
-                    env[:aws_compute].modify_instance_attribute(server.id, attrs)
+                    JSON.load(%x{vagrant-shell modify-instance-attribute #{server.id} #{attrs}})
                 rescue Shell::Compute::Error => e
                     raise Errors::FogError, :message => e.message
                 end
@@ -227,7 +227,7 @@ module VagrantPlugins
           test_sec_groups = [ "default" ] if test_sec_groups.empty? # AWS default security group
           # filter groups by name or group_id (vpc)
           groups = test_sec_groups.map do |tsg|
-            env[:aws_compute].security_groups.all.select { |sg| tsg == (is_vpc ? sg.group_id : sg.name) }
+            JSON.load(%x{vagrant-shell get-security-groups}).all.select { |sg| tsg == (is_vpc ? sg.group_id : sg.name) }
           end.flatten
           # filter TCP rules
           rules = groups.map { |sg| sg.ip_permissions.select { |r| r["ipProtocol"] == "tcp" } }.flatten
@@ -238,7 +238,7 @@ module VagrantPlugins
         def do_elastic_ip(env, domain, server, elastic_ip)
           if elastic_ip =~ /\d+\.\d+\.\d+\.\d+/
             begin
-              address = env[:aws_compute].addresses.get(elastic_ip)
+              address = JSON.load(%x{vagrant-shell get-elastic-ip #{elastic_ip}})
             rescue
               handle_elastic_ip_error(env, "Could not retrieve Elastic IP: #{elastic_ip}")
             end
@@ -248,7 +248,7 @@ module VagrantPlugins
             @logger.debug("Public IP #{address.public_ip}")
           else
             begin
-              allocation = env[:aws_compute].allocate_address(domain)
+              allocation = JSON.load(%x{vagrant-shell allocate-address #{domain}})
             rescue
               handle_elastic_ip_error(env, "Could not allocate Elastic IP.")
             end
@@ -260,18 +260,18 @@ module VagrantPlugins
           if domain == 'vpc'
             # VPC requires an allocation ID to assign an IP
             if address
-              association = env[:aws_compute].associate_address(server.id, nil, nil, address.allocation_id)
+              association = JSON.load(%x{vagrant-shell associate-address #{server.id} #{address.allocation_id}})
             else
-              association = env[:aws_compute].associate_address(server.id, nil, nil, allocation.body['allocationId'])
+              association = JSON.load(%x{vagrant-shell associate-address #{server.id} #{allocation.body['allocationId']}})
               # Only store release data for an allocated address
               h = { :allocation_id => allocation.body['allocationId'], :association_id => association.body['associationId'], :public_ip => allocation.body['publicIp'] }
             end
           else
             # Standard EC2 instances only need the allocated IP address
             if address
-              association = env[:aws_compute].associate_address(server.id, address.public_ip)
+              association = JSON.load(%x{vagrant-shell associate-address #{server.id} #{address.public_ip}})
             else
-              association = env[:aws_compute].associate_address(server.id, allocation.body['publicIp'])
+              association = JSON.load(%x{vagrant-shell associate-address #{server.id} #{allocation.body['publicIp']}})
               h = { :public_ip => allocation.body['publicIp'] }
             end
           end

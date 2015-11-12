@@ -3,9 +3,7 @@ require "log4r"
 module VagrantPlugins
   module AWS
     module Action
-      # This action connects to AWS, verifies credentials work, and
-      # puts the AWS connection object into the `:aws_compute` key
-      # in the environment.
+      # This action connects to AWS, verifies credentials work
       class ConnectAWS
         def initialize(app, env)
           @app    = app
@@ -36,7 +34,7 @@ module VagrantPlugins
           fog_config[:version]  = region_config.version if region_config.version
 
           @logger.info("Connecting to AWS...")
-          env[:aws_compute] = JSON.load(%x{vagrant-shell connect-to-cloud})
+          JSON.load(%x{vagrant-shell connect-to-cloud})
 
           @app.call(env)
         end
