@@ -29,11 +29,6 @@ module VagrantPlugins
       # @return [Fixnum]
       attr_accessor :instance_check_interval
 
-      # The timeout to wait for an instance to successfully burn into an AMI.
-      #
-      # @return [Fixnum]
-      attr_accessor :instance_package_timeout
-
       # The type of instance to launch, such as "m3.medium"
       #
       # @return [String]
@@ -107,11 +102,6 @@ module VagrantPlugins
       #
       # @return [Hash<String, String>]
       attr_accessor :tags
-
-      # The tags for the AMI generated with package.
-      #
-      # @return [Hash<String, String>]
-      attr_accessor :package_tags
 
       # Use IAM Instance Role for authentication to AWS instead of an
       # explicit access_id and secret_access_key
@@ -191,7 +181,6 @@ module VagrantPlugins
         @availability_zone         = UNSET_VALUE
         @instance_check_interval   = UNSET_VALUE
         @instance_ready_timeout    = UNSET_VALUE
-        @instance_package_timeout  = UNSET_VALUE
         @instance_type             = UNSET_VALUE
         @keypair_name              = UNSET_VALUE
         @private_ip_address        = UNSET_VALUE
@@ -203,7 +192,6 @@ module VagrantPlugins
         @security_groups           = UNSET_VALUE
         @subnet_id                 = UNSET_VALUE
         @tags                      = {}
-        @package_tags              = {}
         @user_data                 = UNSET_VALUE
         @use_iam_profile           = UNSET_VALUE
         @block_device_mapping      = []
@@ -293,10 +281,6 @@ module VagrantPlugins
           result.tags.merge!(self.tags)
           result.tags.merge!(other.tags)
 
-          # Merge in the package tags
-          result.package_tags.merge!(self.package_tags)
-          result.package_tags.merge!(other.package_tags)
-
           # Merge block_device_mapping
           result.block_device_mapping |= self.block_device_mapping
           result.block_device_mapping |= other.block_device_mapping
@@ -318,9 +302,6 @@ module VagrantPlugins
 
         # Set the default interval to check instance state
         @instance_check_interval = 2 if @instance_check_interval == UNSET_VALUE
-
-        # Set the default timeout for waiting for an instance to burn into and ami
-        @instance_package_timeout = 600 if @instance_package_timeout == UNSET_VALUE
 
         # Default instance type is an m3.medium
         @instance_type = "m3.medium" if @instance_type == UNSET_VALUE
