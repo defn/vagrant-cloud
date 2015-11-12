@@ -36,20 +36,20 @@ module VagrantPlugins
 
               env[:ui].info(I18n.t("vagrant_aws.waiting_for_ready"))
               begin
-                retryable(:on => Fog::Errors::TimeoutError, :tries => tries) do
+                retryable(:on => Shell::Errors::TimeoutError, :tries => tries) do
                   # If we're interrupted don't worry about waiting
                   next if env[:interrupted]
 
                   # Wait for the server to be ready
                   server.wait_for(2) { ready? }
                 end
-              rescue Fog::Errors::TimeoutError
+              rescue Shell::Errors::TimeoutError
                 # Notify the user
                 raise Errors::InstanceReadyTimeout,
                   timeout: region_config.instance_ready_timeout
               end
             end
-          rescue Fog::Compute::AWS::Error => e
+          rescue Shell::Compute::Error => e
             raise Errors::FogError, :message => e.message
           end
 

@@ -109,7 +109,7 @@ module VagrantPlugins
 
           begin
             server = env[:aws_compute].servers.create(options)
-          rescue Fog::Compute::AWS::NotFound => e
+          rescue Shell::Compute::NotFound => e
             # Invalid subnet doesn't have its own error so we catch and
             # check the error message here.
             if e.message =~ /subnet ID/
@@ -118,7 +118,7 @@ module VagrantPlugins
             end
 
             raise
-          rescue Fog::Compute::AWS::Error => e
+          rescue Shell::Compute::Error => e
             raise Errors::FogError, :message => e.message
           rescue Excon::Errors::HTTPStatusError => e
             raise Errors::InternalFogError,
@@ -135,14 +135,14 @@ module VagrantPlugins
 
             env[:ui].info(I18n.t("vagrant_aws.waiting_for_ready"))
             begin
-              retryable(:on => Fog::Errors::TimeoutError, :tries => tries) do
+              retryable(:on => Shell::Errors::TimeoutError, :tries => tries) do
                 # If we're interrupted don't worry about waiting
                 next if env[:interrupted]
 
                 # Wait for the server to be ready
                 server.wait_for(2, region_config.instance_check_interval) { ready? }
               end
-            rescue Fog::Errors::TimeoutError
+            rescue Shell::Errors::TimeoutError
               # Delete the instance
               terminate(env)
 
@@ -170,7 +170,7 @@ module VagrantPlugins
                         "SourceDestCheck.Value" => source_dest_check
                     }
                     env[:aws_compute].modify_instance_attribute(server.id, attrs)
-                rescue Fog::Compute::AWS::Error => e
+                rescue Shell::Compute::Error => e
                     raise Errors::FogError, :message => e.message
                 end
             end
