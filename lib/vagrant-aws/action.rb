@@ -36,7 +36,6 @@ module VagrantPlugins
                   next
                 end
                 b3.use ConnectAWS
-                b3.use ElbDeregisterInstance
                 b3.use TerminateInstance
                 b3.use ProvisionerCleanup if defined?(ProvisionerCleanup)
               end
@@ -118,7 +117,6 @@ module VagrantPlugins
           b.use Provision
           b.use SyncedFolders
           b.use WarnNetworks
-          b.use ElbRegisterInstance
         end
       end
 
@@ -186,8 +184,6 @@ module VagrantPlugins
       autoload :TimedProvision, action_root.join("timed_provision") # some plugins now expect this action to exist
       autoload :WaitForState, action_root.join("wait_for_state")
       autoload :WarnNetworks, action_root.join("warn_networks")
-      autoload :ElbRegisterInstance, action_root.join("elb_register_instance")
-      autoload :ElbDeregisterInstance, action_root.join("elb_deregister_instance")
     end
   end
 end
