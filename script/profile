@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+
+function profile {
+  local shome="$(cd -P -- "${BASH_SOURCE%/*}/.." && pwd -P)"
+  PATH="$shome/bin:$shome/exec:$shome/vendor/bundle/bin:$PATH"
+
+  export VAGRANT_I_KNOW_WHAT_IM_DOING_PLEASE_BE_QUIET=1
+}
+
+profile
