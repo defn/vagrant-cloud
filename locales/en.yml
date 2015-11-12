@@ -78,17 +78,6 @@ en:
         If you assign a public IP address to an instance in a VPC, a subnet must be specifed via "subnet_id"
 
     errors:
-      fog_error: |-
-        There was an error talking to AWS. The error message is shown
-        below:
-
-        %{message}
-      internal_fog_error: |-
-        There was an error talking to AWS. The error message is shown
-        below:
-
-        Error: %{error}
-        Response: %{response}
       instance_ready_timeout: |-
         The instance never became "ready" in AWS. The timeout currently
         set waiting for the instance to become ready is %{timeout} seconds.

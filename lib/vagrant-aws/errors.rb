@@ -7,14 +7,6 @@ module VagrantPlugins
         error_namespace("vagrant_aws.errors")
       end
 
-      class FogError < VagrantAWSError
-        error_key(:fog_error)
-      end
-
-      class InternalFogError < VagrantAWSError
-        error_key(:internal_fog_error)
-      end
-
       class InstanceReadyTimeout < VagrantAWSError
         error_key(:instance_ready_timeout)
       end
