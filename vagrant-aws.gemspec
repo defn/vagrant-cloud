@@ -9,13 +9,11 @@ Gem::Specification.new do |s|
   s.authors       = "Mitchell Hashimoto"
   s.email         = "mitchell@hashicorp.com"
   s.homepage      = "http://www.vagrantup.com"
-  s.summary       = "Enables Vagrant to manage machines in EC2 and VPC."
-  s.description   = "Enables Vagrant to manage machines in EC2 and VPC."
+  s.summary       = "Vagrant provider shell based on vagrant-aws"
+  s.description   = "Vagrant provider shell based on vagrant-aws"
 
   s.required_rubygems_version = ">= 1.3.6"
   s.rubyforge_project         = "vagrant-aws"
-
-  s.add_runtime_dependency "fog", "~> 1.22"
 
   s.add_development_dependency "rake"
   s.add_development_dependency "rspec", "~> 2.12"
