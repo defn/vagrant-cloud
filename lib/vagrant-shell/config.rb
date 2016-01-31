@@ -66,16 +66,20 @@ module VagrantPlugins
 
       def initialize(region_specific=false)
         @access_key_id             = UNSET_VALUE
-        @ami                       = UNSET_VALUE
-        @availability_zone         = UNSET_VALUE
-        @instance_check_interval   = UNSET_VALUE
-        @instance_ready_timeout    = UNSET_VALUE
-        @instance_type             = UNSET_VALUE
-        @region                    = UNSET_VALUE
-        @endpoint                  = UNSET_VALUE
-        @version                   = UNSET_VALUE
         @secret_access_key         = UNSET_VALUE
         @session_token             = UNSET_VALUE
+
+        @ami                       = UNSET_VALUE
+        @instance_type             = UNSET_VALUE
+        @region                    = UNSET_VALUE
+        @availability_zone         = UNSET_VALUE
+
+        @instance_check_interval   = UNSET_VALUE
+        @instance_ready_timeout    = UNSET_VALUE
+
+        @endpoint                  = UNSET_VALUE
+        @version                   = UNSET_VALUE
+
         @tags                      = {}
 
         # Internal state (prefix with __ so they aren't automatically
