@@ -10,3 +10,7 @@ Source `script/profile` to tune vagrant warnings and gem paths.  Only
 tested on bash.
 
 Runs tests: `bundle _1.10.5_ exec rake`
+
+### Acknowledgments
+
+This fork is based on [Vagrant AWS plugin](https://github.com/mitchellh/vagrant-aws).

@@ -6,8 +6,8 @@ Gem::Specification.new do |s|
   s.version       = VagrantPlugins::Shell::VERSION
   s.platform      = Gem::Platform::RUBY
   s.license       = "MIT"
-  s.authors       = "Mitchell Hashimoto"
-  s.email         = "mitchell@hashicorp.com"
+  s.authors       = [ "Mitchell Hashimoto", "Tom Bombadil" ]
+  s.email         = [ "mitchell@hashicorp.com", "amanibhavam@destructuring.org" ]
   s.homepage      = "https://github.com/defn/vagrant-shell"
   s.summary       = "Vagrant provider using shell-scripts"
   s.description   = "Vagrant provider using shell-scripts (based on vagrant-aws)"
