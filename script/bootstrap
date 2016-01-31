@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+
+function bootstrap {
+  local shome="$(cd -P -- "$(dirname -- "$BASH_SOURCE")/.." && pwd -P)"
+  source "$shome/script/profile"
+
+  bundle _1.10.6_ install --path vendor/bundle
+  bundle _1.10.6_ exec rake
+}
+
+bootstrap
+
