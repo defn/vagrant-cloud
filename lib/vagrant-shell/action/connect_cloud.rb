@@ -7,7 +7,7 @@ module VagrantPlugins
       class ConnectCloud
         def initialize(app, env)
           @app    = app
-          @logger = Log4r::Logger.new("vagrant_shell::action::connect_aws")
+          @logger = Log4r::Logger.new("vagrant_shell::action::connect_cloud")
         end
 
         def call(env)
@@ -17,17 +17,17 @@ module VagrantPlugins
           # Get the configs
           region_config = env[:machine].provider_config.get_region_config(region)
 
-          # Build the fog config
-          fog_config = {
-            :provider => :aws,
+          # Build the cloud config
+          cloud_config = {
+            :provider => :shell,
             :region   => region
           }
-          fog_config[:aws_access_key_id] = region_config.access_key_id
-          fog_config[:aws_secret_access_key] = region_config.secret_access_key
-          fog_config[:aws_session_token] = region_config.session_token
+          cloud_config[:cloud_access_key_id] = region_config.access_key_id
+          cloud_config[:cloud_secret_access_key] = region_config.secret_access_key
+          cloud_config[:cloud_session_token] = region_config.session_token
 
-          fog_config[:endpoint] = region_config.endpoint if region_config.endpoint
-          fog_config[:version]  = region_config.version if region_config.version
+          cloud_config[:endpoint] = region_config.endpoint if region_config.endpoint
+          cloud_config[:version]  = region_config.version if region_config.version
 
           @logger.info("Connecting to Cloud...")
           JSON.load(%x{vagrant-shell connect-to-cloud})

@@ -3,7 +3,7 @@ require "vagrant"
 module VagrantPlugins
   module Shell
     class Config < Vagrant.plugin("2", :config)
-      # The access key ID for accessing AWS.
+      # The access key ID for accessing cloud.
       #
       # @return [String]
       attr_accessor :access_key_id
@@ -50,7 +50,7 @@ module VagrantPlugins
       # @return [String]
       attr_accessor :elastic_ip
 
-      # The name of the AWS region in which to create the instance.
+      # The name of the cloud region in which to create the instance.
       #
       # @return [String]
       attr_accessor :region
@@ -60,17 +60,17 @@ module VagrantPlugins
       # @return [String]
       attr_accessor :endpoint
 
-      # The version of the AWS api to use
+      # The version of the cloud api to use
       #
       # @return [String]
       attr_accessor :version
 
-      # The secret access key for accessing AWS.
+      # The secret access key for accessing cloud.
       #
       # @return [String]
       attr_accessor :secret_access_key
 
-      # The token associated with the key for accessing AWS.
+      # The token associated with the key for accessing cloud.
       #
       # @return [String]
       attr_accessor :session_token
@@ -194,7 +194,7 @@ module VagrantPlugins
       # configuration object. This allows the user to override things like
       # AMI and keypair name for regions. Example:
       #
-      #     aws.region_config "us-east-1" do |region|
+      #     cloud.region_config "us-east-1" do |region|
       #       region.ami = "ami-12345678"
       #       region.keypair_name = "company-east"
       #     end
@@ -202,7 +202,7 @@ module VagrantPlugins
       # @param [String] region The region name to configure.
       # @param [Hash] attributes Direct attributes to set on the configuration
       #   as a shortcut instead of specifying a full block.
-      # @yield [config] Yields a new AWS configuration.
+      # @yield [config] Yields a new cloud configuration.
       def region_config(region, attributes=nil, &block)
         # Append the block to the list of region configs for that region.
         # We'll evaluate these upon finalization.
@@ -255,11 +255,11 @@ module VagrantPlugins
       end
 
       def finalize!
-        # Try to get access keys from standard AWS environment variables; they
+        # Try to get access keys from standard cloud environment variables; they
         # will default to nil if the environment variables are not present.
-        @access_key_id     = ENV['_ACCESS_KEY'] if @access_key_id     == UNSET_VALUE
-        @secret_access_key = ENV['_SECRET_KEY'] if @secret_access_key == UNSET_VALUE
-        @session_token     = ENV['_SESSION_TOKEN'] if @session_token == UNSET_VALUE
+        @access_key_id     = ENV['CLOUD_ACCESS_KEY'] if @access_key_id     == UNSET_VALUE
+        @secret_access_key = ENV['CLOUD_SECRET_KEY'] if @secret_access_key == UNSET_VALUE
+        @session_token     = ENV['CLOUD_SESSION_TOKEN'] if @session_token == UNSET_VALUE
 
         # AMI must be nil, since we can't default that
         @ami = nil if @ami == UNSET_VALUE
@@ -282,7 +282,7 @@ module VagrantPlugins
         # Acquire an elastic IP if requested
         @elastic_ip = nil if @elastic_ip == UNSET_VALUE
 
-        # Default region is us-east-1. This is sensible because AWS
+        # Default region is us-east-1. This is sensible because cloud
         # generally defaults to this as well.
         @region = "us-east-1" if @region == UNSET_VALUE
         @availability_zone = nil if @availability_zone == UNSET_VALUE

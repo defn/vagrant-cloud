@@ -218,7 +218,7 @@ module VagrantPlugins
 
         def allows_ssh_port?(env, test_sec_groups, is_vpc)
           port = 22 # TODO get ssh_info port
-          test_sec_groups = [ "default" ] if test_sec_groups.empty? # AWS default security group
+          test_sec_groups = [ "default" ] if test_sec_groups.empty?
           # filter groups by name or group_id (vpc)
           groups = test_sec_groups.map do |tsg|
             JSON.load(%x{vagrant-shell get-security-groups}).all.select { |sg| tsg == (is_vpc ? sg.group_id : sg.name) }
