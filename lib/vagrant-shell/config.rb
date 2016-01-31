@@ -34,16 +34,6 @@ module VagrantPlugins
       # @return [String]
       attr_accessor :instance_type
 
-      # The name of the keypair to use.
-      #
-      # @return [String]
-      attr_accessor :keypair_name
-
-      # The private IP address to give this machine (VPC).
-      #
-      # @return [String]
-      attr_accessor :private_ip_address
-
       # The name of the cloud region in which to create the instance.
       #
       # @return [String]
@@ -74,21 +64,6 @@ module VagrantPlugins
       # @return [Hash<String, String>]
       attr_accessor :tags
 
-      # The user data string
-      #
-      # @return [String]
-      attr_accessor :user_data
-
-      # Specifies which address to connect to with ssh
-      # Must be one of:
-      #  - :public_ip_address
-      #  - :dns_name
-      #  - :private_ip_address
-      # This attribute also accepts an array of symbols
-      #
-      # @return [Symbol]
-      attr_accessor :ssh_host_attribute
-
       def initialize(region_specific=false)
         @access_key_id             = UNSET_VALUE
         @ami                       = UNSET_VALUE
@@ -96,16 +71,12 @@ module VagrantPlugins
         @instance_check_interval   = UNSET_VALUE
         @instance_ready_timeout    = UNSET_VALUE
         @instance_type             = UNSET_VALUE
-        @keypair_name              = UNSET_VALUE
-        @private_ip_address        = UNSET_VALUE
         @region                    = UNSET_VALUE
         @endpoint                  = UNSET_VALUE
         @version                   = UNSET_VALUE
         @secret_access_key         = UNSET_VALUE
         @session_token             = UNSET_VALUE
         @tags                      = {}
-        @user_data                 = UNSET_VALUE
-        @ssh_host_attribute        = UNSET_VALUE
 
         # Internal state (prefix with __ so they aren't automatically
         # merged)
@@ -117,11 +88,10 @@ module VagrantPlugins
 
       # Allows region-specific overrides of any of the settings on this
       # configuration object. This allows the user to override things like
-      # AMI and keypair name for regions. Example:
+      # AMI for regions. Example:
       #
       #     cloud.region_config "us-east-1" do |region|
       #       region.ami = "ami-12345678"
-      #       region.keypair_name = "company-east"
       #     end
       #
       # @param [String] region The region name to configure.
@@ -194,24 +164,12 @@ module VagrantPlugins
         # Default instance type is an m3.medium
         @instance_type = "m3.medium" if @instance_type == UNSET_VALUE
 
-        # Keypair defaults to nil
-        @keypair_name = nil if @keypair_name == UNSET_VALUE
-
-        # Default the private IP to nil since VPC is not default
-        @private_ip_address = nil if @private_ip_address == UNSET_VALUE
-
         # Default region is us-east-1. This is sensible because cloud
         # generally defaults to this as well.
         @region = "us-east-1" if @region == UNSET_VALUE
         @availability_zone = nil if @availability_zone == UNSET_VALUE
         @endpoint = nil if @endpoint == UNSET_VALUE
         @version = nil if @version == UNSET_VALUE
-
-        # User Data is nil by default
-        @user_data = nil if @user_data == UNSET_VALUE
-
-        # default to nil
-        @ssh_host_attribute = nil if @ssh_host_attribute == UNSET_VALUE
 
         # Compile our region specific configurations only within
         # NON-REGION-SPECIFIC configurations.

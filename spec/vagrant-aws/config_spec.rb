@@ -22,14 +22,10 @@ describe VagrantPlugins::Shell::Config do
     its("instance_ready_timeout") { should == 120 }
     its("instance_check_interval") { should == 2 }
     its("instance_type")     { should == "m3.medium" }
-    its("keypair_name")      { should be_nil }
-    its("private_ip_address") { should be_nil }
     its("region")            { should == "us-east-1" }
     its("secret_access_key") { should be_nil }
     its("session_token") { should be_nil }
     its("tags")              { should == {} }
-    its("user_data")         { should be_nil }
-    its("ssh_host_attribute") { should be_nil }
   end
 
   describe "overriding defaults" do
@@ -38,10 +34,9 @@ describe VagrantPlugins::Shell::Config do
     # each of these attributes to "foo" in isolation, and reads the value
     # and asserts the proper result comes back out.
     [:access_key_id, :ami, :availability_zone, :instance_ready_timeout,
-      :instance_type, :keypair_name, :ssh_host_attribute,
+      :instance_type,
       :region, :secret_access_key, :session_token,
-      :tags,
-      :user_data
+      :tags
       ].each do |attribute|
 
       it "should not default #{attribute} if overridden" do
@@ -88,7 +83,6 @@ describe VagrantPlugins::Shell::Config do
     let(:config_access_key_id)     { "foo" }
     let(:config_ami)               { "foo" }
     let(:config_instance_type)     { "foo" }
-    let(:config_keypair_name)      { "foo" }
     let(:config_region)            { "foo" }
     let(:config_secret_access_key) { "foo" }
     let(:config_session_token)     { "foo" }
@@ -97,7 +91,6 @@ describe VagrantPlugins::Shell::Config do
       instance.access_key_id     = config_access_key_id
       instance.ami               = config_ami
       instance.instance_type     = config_instance_type
-      instance.keypair_name      = config_keypair_name
       instance.region            = config_region
       instance.secret_access_key = config_secret_access_key
       instance.session_token     = config_session_token
@@ -123,7 +116,6 @@ describe VagrantPlugins::Shell::Config do
       its("access_key_id")     { should == config_access_key_id }
       its("ami")               { should == config_ami }
       its("instance_type")     { should == config_instance_type }
-      its("keypair_name")      { should == config_keypair_name }
       its("region")            { should == config_region }
       its("secret_access_key") { should == config_secret_access_key }
       its("session_token")     { should == config_session_token }
@@ -148,7 +140,6 @@ describe VagrantPlugins::Shell::Config do
       its("access_key_id")     { should == config_access_key_id }
       its("ami")               { should == config_ami }
       its("instance_type")     { should == config_instance_type }
-      its("keypair_name")      { should == config_keypair_name }
       its("region")            { should == region_name }
       its("secret_access_key") { should == config_secret_access_key }
       its("session_token")     { should == config_session_token }

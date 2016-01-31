@@ -7,9 +7,6 @@ en:
 
     launching_instance: |-
       Launching an instance with the following settings...
-    launch_no_keypair: |-
-      Warning! You didn't specify a keypair to launch your instance with.
-      This can sometimes result in not being able to access your instance.
     not_created: |-
       Instance is not created. Please run `vagrant up` first.
     packaging_instance: |-

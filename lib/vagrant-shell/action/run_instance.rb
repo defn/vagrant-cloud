@@ -29,15 +29,7 @@ module VagrantPlugins
           ami                   = region_config.ami
           availability_zone     = region_config.availability_zone
           instance_type         = region_config.instance_type
-          keypair               = region_config.keypair_name
-          private_ip_address    = region_config.private_ip_address
           tags                  = region_config.tags
-          user_data             = region_config.user_data
-
-          # If there is no keypair then warn the user
-          if !keypair
-            env[:ui].warn(I18n.t("vagrant_shell.launch_no_keypair"))
-          end
 
           # Launch!
           env[:ui].info(I18n.t("vagrant_shell.launching_instance"))
@@ -45,19 +37,12 @@ module VagrantPlugins
           env[:ui].info(" -- AMI: #{ami}")
           env[:ui].info(" -- Region: #{region}")
           env[:ui].info(" -- Availability Zone: #{availability_zone}") if availability_zone
-          env[:ui].info(" -- Keypair: #{keypair}") if keypair
-          env[:ui].info(" -- Private IP: #{private_ip_address}") if private_ip_address
-          env[:ui].info(" -- User Data: yes") if user_data
-          env[:ui].info(" -- User Data: #{user_data}") if user_data
 
           options = {
             :availability_zone         => availability_zone,
             :flavor_id                 => instance_type,
             :image_id                  => ami,
-            :key_name                  => keypair,
-            :private_ip_address        => private_ip_address,
-            :tags                      => tags,
-            :user_data                 => user_data
+            :tags                      => tags
           }
 
           begin
