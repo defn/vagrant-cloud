@@ -217,7 +217,7 @@ module VagrantPlugins
         end
 
         def allows_ssh_port?(env, test_sec_groups, is_vpc)
-          port = 22 # TODO get ssh_info port
+          port = 22
           test_sec_groups = [ "default" ] if test_sec_groups.empty?
           # filter groups by name or group_id (vpc)
           groups = test_sec_groups.map do |tsg|
