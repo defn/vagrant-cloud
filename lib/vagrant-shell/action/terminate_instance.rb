@@ -16,34 +16,12 @@ module VagrantPlugins
           region         = env[:machine].provider_config.region
           region_config  = env[:machine].provider_config.get_region_config(region)
 
-          elastic_ip     = region_config.elastic_ip
-
-          # Release the elastic IP
-          ip_file = env[:machine].data_dir.join('elastic_ip')
-          if ip_file.file?
-            release_address(env,ip_file.read)
-            ip_file.delete
-          end
-
           # Destroy the server and remove the tracking ID
           env[:ui].info(I18n.t("vagrant_shell.terminating"))
           server.destroy
           env[:machine].id = nil
 
           @app.call(env)
-        end
-
-        # Release an elastic IP address
-        def release_address(env,eip)
-          h = JSON.parse(eip)
-          # Use association_id and allocation_id for VPC, use public IP for EC2
-          if h['association_id']
-            JSON.load(%x{vagrant-shell disassociate-address '#{h['association_id']}'})
-            JSON.load(%x{vagrant-shell release-address '#{h['association_id']}'})
-          else
-            JSON.load(%x{vagrant-shell disassociate-address '#{h['public_ip']}'})
-            JSON.load(%x{vagrant-shell release-address '#{h['public_ip']}'})
-          end
         end
       end
     end

@@ -27,19 +27,9 @@ describe VagrantPlugins::Shell::Config do
     its("region")            { should == "us-east-1" }
     its("secret_access_key") { should be_nil }
     its("session_token") { should be_nil }
-    its("security_groups")   { should == [] }
-    its("subnet_id")         { should be_nil }
     its("tags")              { should == {} }
     its("user_data")         { should be_nil }
-    its("block_device_mapping")  {should == [] }
-    its("elastic_ip")        { should be_nil }
-    its("terminate_on_shutdown") { should == false }
     its("ssh_host_attribute") { should be_nil }
-    its("monitoring")        { should == false }
-    its("ebs_optimized")     { should == false }
-    its("source_dest_check")       { should be_nil }
-    its("associate_public_ip")     { should == false }
-    its("tenancy")     { should == "default" }
   end
 
   describe "overriding defaults" do
@@ -49,22 +39,16 @@ describe VagrantPlugins::Shell::Config do
     # and asserts the proper result comes back out.
     [:access_key_id, :ami, :availability_zone, :instance_ready_timeout,
       :instance_type, :keypair_name, :ssh_host_attribute,
-      :ebs_optimized, :region, :secret_access_key, :session_token, :monitoring,
-      :associate_public_ip, :subnet_id, :tags, :elastic_ip,
-      :terminate_on_shutdown, 
-      :user_data, :block_device_mapping,
-      :source_dest_check].each do |attribute|
+      :region, :secret_access_key, :session_token,
+      :tags,
+      :user_data
+      ].each do |attribute|
 
       it "should not default #{attribute} if overridden" do
         instance.send("#{attribute}=".to_sym, "foo")
         instance.finalize!
         instance.send(attribute).should == "foo"
       end
-    end
-    it "should not default security_groups if overridden" do
-      instance.security_groups = "foo"
-      instance.finalize!
-      instance.security_groups.should == ["foo"]
     end
   end
 
@@ -83,9 +67,9 @@ describe VagrantPlugins::Shell::Config do
 
     context "with EC2 credential environment variables" do
       before :each do
-        ENV.stub(:[]).with("_ACCESS_KEY").and_return("access_key")
-        ENV.stub(:[]).with("_SECRET_KEY").and_return("secret_key")
-        ENV.stub(:[]).with("_SESSION_TOKEN").and_return("session_token")
+        ENV.stub(:[]).with("CLOUD_ACCESS_KEY").and_return("access_key")
+        ENV.stub(:[]).with("CLOUD_SECRET_KEY").and_return("secret_key")
+        ENV.stub(:[]).with("CLOUD_SESSION_TOKEN").and_return("session_token")
       end
 
       subject do
@@ -207,19 +191,15 @@ describe VagrantPlugins::Shell::Config do
       let(:first)  { described_class.new }
       let(:second) { described_class.new }
 
-      it "should merge the tags and block_device_mappings" do
+      it "should merge the tags" do
         first.tags["one"] = "one"
         second.tags["two"] = "two"
-        first.block_device_mapping = [{:one => "one"}]
-        second.block_device_mapping = [{:two => "two"}]
 
         third = first.merge(second)
         third.tags.should == {
           "one" => "one",
           "two" => "two"
         }
-        third.block_device_mapping.index({:one => "one"}).should_not be_nil
-        third.block_device_mapping.index({:two => "two"}).should_not be_nil
       end
     end
   end

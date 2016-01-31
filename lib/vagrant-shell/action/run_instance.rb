@@ -31,25 +31,12 @@ module VagrantPlugins
           instance_type         = region_config.instance_type
           keypair               = region_config.keypair_name
           private_ip_address    = region_config.private_ip_address
-          security_groups       = region_config.security_groups
-          subnet_id             = region_config.subnet_id
           tags                  = region_config.tags
           user_data             = region_config.user_data
-          block_device_mapping  = region_config.block_device_mapping
-          elastic_ip            = region_config.elastic_ip
-          terminate_on_shutdown = region_config.terminate_on_shutdown
-          associate_public_ip   = region_config.associate_public_ip
-          kernel_id             = region_config.kernel_id
-          tenancy               = region_config.tenancy
 
           # If there is no keypair then warn the user
           if !keypair
             env[:ui].warn(I18n.t("vagrant_shell.launch_no_keypair"))
-          end
-
-          # If there is a subnet ID then warn the user
-          if subnet_id && !elastic_ip
-            env[:ui].warn(I18n.t("vagrant_shell.launch_vpc_warning"))
           end
 
           # Launch!
@@ -59,16 +46,9 @@ module VagrantPlugins
           env[:ui].info(" -- Region: #{region}")
           env[:ui].info(" -- Availability Zone: #{availability_zone}") if availability_zone
           env[:ui].info(" -- Keypair: #{keypair}") if keypair
-          env[:ui].info(" -- Subnet ID: #{subnet_id}") if subnet_id
           env[:ui].info(" -- Private IP: #{private_ip_address}") if private_ip_address
-          env[:ui].info(" -- Elastic IP: #{elastic_ip}") if elastic_ip
           env[:ui].info(" -- User Data: yes") if user_data
-          env[:ui].info(" -- Security Groups: #{security_groups.inspect}") if !security_groups.empty?
           env[:ui].info(" -- User Data: #{user_data}") if user_data
-          env[:ui].info(" -- Block Device Mapping: #{block_device_mapping}") if block_device_mapping
-          env[:ui].info(" -- Terminate On Shutdown: #{terminate_on_shutdown}")
-          env[:ui].info(" -- Assigning a public IP address in a VPC: #{associate_public_ip}")
-          env[:ui].info(" -- VPC tenancy specification: #{tenancy}")
 
           options = {
             :availability_zone         => availability_zone,
@@ -76,34 +56,12 @@ module VagrantPlugins
             :image_id                  => ami,
             :key_name                  => keypair,
             :private_ip_address        => private_ip_address,
-            :subnet_id                 => subnet_id,
             :tags                      => tags,
-            :user_data                 => user_data,
-            :block_device_mapping      => block_device_mapping,
-            :instance_initiated_shutdown_behavior => terminate_on_shutdown == true ? "terminate" : nil,
-            :associate_public_ip       => associate_public_ip,
-            :kernel_id                 => kernel_id,
-            :associate_public_ip       => associate_public_ip,
-            :tenancy                   => tenancy
+            :user_data                 => user_data
           }
-
-          if !security_groups.empty?
-            security_group_key = options[:subnet_id].nil? ? :groups : :security_group_ids
-            options[security_group_key] = security_groups
-            env[:ui].warn(I18n.t("vagrant_shell.warn_ssh_access")) unless allows_ssh_port?(env, security_groups, subnet_id)
-          end
 
           begin
             server = JSON.load(%x{vagrant-shell create-instance #{options}})
-          rescue Shell::Errors::NotFound => e
-            # Invalid subnet doesn't have its own error so we catch and
-            # check the error message here.
-            if e.message =~ /subnet ID/
-              raise Errors::FogError,
-                :message => "Subnet ID not found: #{subnet_id}"
-            end
-
-            raise
           rescue Shell::Errors::Error => e
             raise Errors::FogError, :message => e.message
           rescue Excon::Errors::HTTPStatusError => e
@@ -139,12 +97,6 @@ module VagrantPlugins
           end
 
           @logger.info("Time to instance ready: #{env[:metrics]["instance_ready_time"]}")
-
-          # Allocate and associate an elastic IP if requested
-          if elastic_ip
-            domain = subnet_id ? 'vpc' : 'standard'
-            do_elastic_ip(env, domain, server, elastic_ip)
-          end
 
           if !env[:interrupted]
             env[:metrics]["instance_ssh_time"] = Util::Timer.time do
@@ -203,70 +155,6 @@ module VagrantPlugins
           rules = groups.map { |sg| sg.ip_permissions.select { |r| r["ipProtocol"] == "tcp" } }.flatten
           # test if any range includes port
           !rules.select { |r| (r["fromPort"]..r["toPort"]).include?(port) }.empty?
-        end
-
-        def do_elastic_ip(env, domain, server, elastic_ip)
-          if elastic_ip =~ /\d+\.\d+\.\d+\.\d+/
-            begin
-              address = JSON.load(%x{vagrant-shell get-elastic-ip #{elastic_ip}})
-            rescue
-              handle_elastic_ip_error(env, "Could not retrieve Elastic IP: #{elastic_ip}")
-            end
-            if address.nil?
-              handle_elastic_ip_error(env, "Elastic IP not available: #{elastic_ip}")
-            end
-            @logger.debug("Public IP #{address.public_ip}")
-          else
-            begin
-              allocation = JSON.load(%x{vagrant-shell allocate-address #{domain}})
-            rescue
-              handle_elastic_ip_error(env, "Could not allocate Elastic IP.")
-            end
-            @logger.debug("Public IP #{allocation.body['publicIp']}")
-          end
-
-          # Associate the address and save the metadata to a hash
-          h = nil
-          if domain == 'vpc'
-            # VPC requires an allocation ID to assign an IP
-            if address
-              association = JSON.load(%x{vagrant-shell associate-address #{server.id} #{address.allocation_id}})
-            else
-              association = JSON.load(%x{vagrant-shell associate-address #{server.id} #{allocation.body['allocationId']}})
-              # Only store release data for an allocated address
-              h = { :allocation_id => allocation.body['allocationId'], :association_id => association.body['associationId'], :public_ip => allocation.body['publicIp'] }
-            end
-          else
-            # Standard EC2 instances only need the allocated IP address
-            if address
-              association = JSON.load(%x{vagrant-shell associate-address #{server.id} #{address.public_ip}})
-            else
-              association = JSON.load(%x{vagrant-shell associate-address #{server.id} #{allocation.body['publicIp']}})
-              h = { :public_ip => allocation.body['publicIp'] }
-            end
-          end
-
-          unless association.body['return']
-            @logger.debug("Could not associate Elastic IP.")
-            terminate(env)
-            raise Errors::FogError,
-                            :message => "Could not allocate Elastic IP."
-          end
-
-          # Save this IP to the data dir so it can be released when the instance is destroyed
-          if h 
-            ip_file = env[:machine].data_dir.join('elastic_ip')
-            ip_file.open('w+') do |f|
-              f.write(h.to_json)
-            end
-          end
-        end
-
-        def handle_elastic_ip_error(env, message) 
-          @logger.debug(message)
-          terminate(env)
-          raise Errors::FogError,
-                          :message => message
         end
 
         def terminate(env)

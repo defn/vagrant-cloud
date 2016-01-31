@@ -44,12 +44,6 @@ module VagrantPlugins
       # @return [String]
       attr_accessor :private_ip_address
 
-      # If true, acquire and attach an elastic IP address.
-      # If set to an IP address, assign to the instance.
-      #
-      # @return [String]
-      attr_accessor :elastic_ip
-
       # The name of the cloud region in which to create the instance.
       #
       # @return [String]
@@ -75,17 +69,6 @@ module VagrantPlugins
       # @return [String]
       attr_accessor :session_token
 
-      # The security groups to set on the instance. For VPC this must
-      # be a list of IDs. For EC2, it can be either.
-      #
-      # @return [Array<String>]
-      attr_reader :security_groups
-
-      # The subnet ID to launch the machine into (VPC).
-      #
-      # @return [String]
-      attr_accessor :subnet_id
-
       # The tags for the machine.
       #
       # @return [Hash<String, String>]
@@ -96,16 +79,6 @@ module VagrantPlugins
       # @return [String]
       attr_accessor :user_data
 
-      # Block device mappings
-      #
-      # @return [Array<Hash>]
-      attr_accessor :block_device_mapping
-
-      # Indicates whether an instance stops or terminates when you initiate shutdown from the instance
-      #
-      # @return [bool]
-      attr_accessor :terminate_on_shutdown
-
       # Specifies which address to connect to with ssh
       # Must be one of:
       #  - :public_ip_address
@@ -115,22 +88,6 @@ module VagrantPlugins
       #
       # @return [Symbol]
       attr_accessor :ssh_host_attribute
-
-      # Assigning a public IP address in a VPC
-      #
-      # @return [Boolean]
-      attr_accessor :associate_public_ip
-
-      # Kernel Id
-      #
-      # @return [String]
-      attr_accessor :kernel_id
-
-      # The tenancy of the instance in a VPC.
-      # Defaults to 'default'.
-      #
-      # @return [String]
-      attr_accessor :tenancy
 
       def initialize(region_specific=false)
         @access_key_id             = UNSET_VALUE
@@ -146,17 +103,9 @@ module VagrantPlugins
         @version                   = UNSET_VALUE
         @secret_access_key         = UNSET_VALUE
         @session_token             = UNSET_VALUE
-        @security_groups           = UNSET_VALUE
-        @subnet_id                 = UNSET_VALUE
         @tags                      = {}
         @user_data                 = UNSET_VALUE
-        @block_device_mapping      = []
-        @elastic_ip                = UNSET_VALUE
-        @terminate_on_shutdown     = UNSET_VALUE
         @ssh_host_attribute        = UNSET_VALUE
-        @associate_public_ip       = UNSET_VALUE
-        @kernel_id                 = UNSET_VALUE
-        @tenancy                   = UNSET_VALUE
 
         # Internal state (prefix with __ so they aren't automatically
         # merged)
@@ -164,12 +113,6 @@ module VagrantPlugins
         @__finalized = false
         @__region_config = {}
         @__region_specific = region_specific
-      end
-
-      # set security_groups
-      def security_groups=(value)
-        # convert value to array if necessary
-        @security_groups = value.is_a?(Array) ? value : [value]
       end
 
       # Allows region-specific overrides of any of the settings on this
@@ -229,10 +172,6 @@ module VagrantPlugins
           # Merge in the tags
           result.tags.merge!(self.tags)
           result.tags.merge!(other.tags)
-
-          # Merge block_device_mapping
-          result.block_device_mapping |= self.block_device_mapping
-          result.block_device_mapping |= other.block_device_mapping
         end
       end
 
@@ -261,9 +200,6 @@ module VagrantPlugins
         # Default the private IP to nil since VPC is not default
         @private_ip_address = nil if @private_ip_address == UNSET_VALUE
 
-        # Acquire an elastic IP if requested
-        @elastic_ip = nil if @elastic_ip == UNSET_VALUE
-
         # Default region is us-east-1. This is sensible because cloud
         # generally defaults to this as well.
         @region = "us-east-1" if @region == UNSET_VALUE
@@ -271,29 +207,11 @@ module VagrantPlugins
         @endpoint = nil if @endpoint == UNSET_VALUE
         @version = nil if @version == UNSET_VALUE
 
-        # The security groups are empty by default.
-        @security_groups = [] if @security_groups == UNSET_VALUE
-
-        # Subnet is nil by default otherwise we'd launch into VPC.
-        @subnet_id = nil if @subnet_id == UNSET_VALUE
-
         # User Data is nil by default
         @user_data = nil if @user_data == UNSET_VALUE
 
-        # default false
-        @terminate_on_shutdown = false if @terminate_on_shutdown == UNSET_VALUE
-
         # default to nil
         @ssh_host_attribute = nil if @ssh_host_attribute == UNSET_VALUE
-
-        # default false
-        @associate_public_ip = false if @associate_public_ip == UNSET_VALUE
-
-        # default 'default'
-        @tenancy = "default" if @tenancy == UNSET_VALUE
-
-        # default to nil
-        @kernel_id = nil if @kernel_id == UNSET_VALUE
 
         # Compile our region specific configurations only within
         # NON-REGION-SPECIFIC configurations.
@@ -334,10 +252,6 @@ module VagrantPlugins
             config.access_key_id.nil?
           errors << I18n.t("vagrant_shell.config.secret_access_key_required") if \
             config.secret_access_key.nil?
-
-          if config.associate_public_ip && !config.subnet_id
-            errors << I18n.t("vagrant_shell.config.subnet_id_required_with_public_ip")
-          end
 
           errors << I18n.t("vagrant_shell.config.ami_required", :region => @region)  if config.ami.nil?
         end
