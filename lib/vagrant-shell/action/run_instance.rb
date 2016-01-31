@@ -129,19 +129,6 @@ module VagrantPlugins
           end
         end
 
-        def allows_ssh_port?(env, test_sec_groups, is_vpc)
-          port = 22
-          test_sec_groups = [ "default" ] if test_sec_groups.empty?
-          # filter groups by name or group_id (vpc)
-          groups = test_sec_groups.map do |tsg|
-            JSON.load(%x{vagrant-shell get-security-groups}).all.select { |sg| tsg == (is_vpc ? sg.group_id : sg.name) }
-          end.flatten
-          # filter TCP rules
-          rules = groups.map { |sg| sg.ip_permissions.select { |r| r["ipProtocol"] == "tcp" } }.flatten
-          # test if any range includes port
-          !rules.select { |r| (r["fromPort"]..r["toPort"]).include?(port) }.empty?
-        end
-
         def terminate(env)
           destroy_env = env.dup
           destroy_env.delete(:interrupted)
