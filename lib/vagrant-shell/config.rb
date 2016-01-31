@@ -121,11 +121,6 @@ module VagrantPlugins
       # @return [Boolean]
       attr_accessor :monitoring
 
-      # Source Destination check
-      #
-      # @return [Boolean]
-      attr_accessor :source_dest_check
-
       # Assigning a public IP address in a VPC
       #
       # @return [Boolean]
@@ -165,7 +160,6 @@ module VagrantPlugins
         @terminate_on_shutdown     = UNSET_VALUE
         @ssh_host_attribute        = UNSET_VALUE
         @monitoring                = UNSET_VALUE
-        @source_dest_check         = UNSET_VALUE
         @associate_public_ip       = UNSET_VALUE
         @kernel_id                 = UNSET_VALUE
         @tenancy                   = UNSET_VALUE
@@ -300,9 +294,6 @@ module VagrantPlugins
 
         # default false
         @monitoring = false if @monitoring == UNSET_VALUE
-
-        # default to nil
-        @source_dest_check = nil if @source_dest_check == UNSET_VALUE
 
         # default false
         @associate_public_ip = false if @associate_public_ip == UNSET_VALUE

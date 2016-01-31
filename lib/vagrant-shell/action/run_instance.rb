@@ -39,7 +39,6 @@ module VagrantPlugins
           elastic_ip            = region_config.elastic_ip
           terminate_on_shutdown = region_config.terminate_on_shutdown
           monitoring            = region_config.monitoring
-          source_dest_check     = region_config.source_dest_check
           associate_public_ip   = region_config.associate_public_ip
           kernel_id             = region_config.kernel_id
           tenancy               = region_config.tenancy
@@ -70,7 +69,6 @@ module VagrantPlugins
           env[:ui].info(" -- Block Device Mapping: #{block_device_mapping}") if block_device_mapping
           env[:ui].info(" -- Terminate On Shutdown: #{terminate_on_shutdown}")
           env[:ui].info(" -- Monitoring: #{monitoring}")
-          env[:ui].info(" -- Source Destination check: #{source_dest_check}")
           env[:ui].info(" -- Assigning a public IP address in a VPC: #{associate_public_ip}")
           env[:ui].info(" -- VPC tenancy specification: #{tenancy}")
 
@@ -150,22 +148,6 @@ module VagrantPlugins
             domain = subnet_id ? 'vpc' : 'standard'
             do_elastic_ip(env, domain, server, elastic_ip)
           end
-
-          # Set the source destination checks
-          if !source_dest_check.nil?
-            if server.vpc_id.nil?
-                env[:ui].warn(I18n.t("vagrant_shell.source_dest_checks_no_vpc"))
-            else
-                begin
-                    attrs = {
-                        "SourceDestCheck.Value" => source_dest_check
-                    }
-                    JSON.load(%x{vagrant-shell modify-instance-attribute #{server.id} #{attrs}})
-                rescue Shell::Errors::Error => e
-                    raise Errors::FogError, :message => e.message
-                end
-            end
-        end
 
           if !env[:interrupted]
             env[:metrics]["instance_ssh_time"] = Util::Timer.time do
