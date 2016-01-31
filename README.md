@@ -4,9 +4,9 @@ Machine configuration are exported as enviroment variables before
 calling the scripts.
 
 # Getting Started
-Install dependencies with bundler: `bundle install --path vendor/bundle`
+Install dependencies with bundler: `bundle _1.10.6_ install --path vendor/bundle`
 
 Source `script/profile` to tune vagrant warnings and gem paths.  Only
 tested on bash.
 
-Runs tests: `rake`
+Runs tests: `bundle _1.10.5_ exec rake`
