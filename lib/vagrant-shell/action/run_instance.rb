@@ -38,7 +38,6 @@ module VagrantPlugins
           block_device_mapping  = region_config.block_device_mapping
           elastic_ip            = region_config.elastic_ip
           terminate_on_shutdown = region_config.terminate_on_shutdown
-          monitoring            = region_config.monitoring
           associate_public_ip   = region_config.associate_public_ip
           kernel_id             = region_config.kernel_id
           tenancy               = region_config.tenancy
@@ -68,7 +67,6 @@ module VagrantPlugins
           env[:ui].info(" -- User Data: #{user_data}") if user_data
           env[:ui].info(" -- Block Device Mapping: #{block_device_mapping}") if block_device_mapping
           env[:ui].info(" -- Terminate On Shutdown: #{terminate_on_shutdown}")
-          env[:ui].info(" -- Monitoring: #{monitoring}")
           env[:ui].info(" -- Assigning a public IP address in a VPC: #{associate_public_ip}")
           env[:ui].info(" -- VPC tenancy specification: #{tenancy}")
 
@@ -83,7 +81,6 @@ module VagrantPlugins
             :user_data                 => user_data,
             :block_device_mapping      => block_device_mapping,
             :instance_initiated_shutdown_behavior => terminate_on_shutdown == true ? "terminate" : nil,
-            :monitoring                => monitoring,
             :associate_public_ip       => associate_public_ip,
             :kernel_id                 => kernel_id,
             :associate_public_ip       => associate_public_ip,

@@ -116,11 +116,6 @@ module VagrantPlugins
       # @return [Symbol]
       attr_accessor :ssh_host_attribute
 
-      # Enables Monitoring
-      #
-      # @return [Boolean]
-      attr_accessor :monitoring
-
       # Assigning a public IP address in a VPC
       #
       # @return [Boolean]
@@ -159,7 +154,6 @@ module VagrantPlugins
         @elastic_ip                = UNSET_VALUE
         @terminate_on_shutdown     = UNSET_VALUE
         @ssh_host_attribute        = UNSET_VALUE
-        @monitoring                = UNSET_VALUE
         @associate_public_ip       = UNSET_VALUE
         @kernel_id                 = UNSET_VALUE
         @tenancy                   = UNSET_VALUE
@@ -291,9 +285,6 @@ module VagrantPlugins
 
         # default to nil
         @ssh_host_attribute = nil if @ssh_host_attribute == UNSET_VALUE
-
-        # default false
-        @monitoring = false if @monitoring == UNSET_VALUE
 
         # default false
         @associate_public_ip = false if @associate_public_ip == UNSET_VALUE
