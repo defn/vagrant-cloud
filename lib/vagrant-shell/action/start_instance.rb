@@ -24,33 +24,29 @@ module VagrantPlugins
 
           env[:ui].info(I18n.t("vagrant_shell.starting"))
 
-          begin
-            server.start
+          server.start
 
-            region = env[:machine].provider_config.region
-            region_config = env[:machine].provider_config.get_region_config(region)
+          region = env[:machine].provider_config.region
+          region_config = env[:machine].provider_config.get_region_config(region)
 
-            # Wait for the instance to be ready first
-            env[:metrics]["instance_ready_time"] = Util::Timer.time do
-                tries = region_config.instance_ready_timeout / 2
+          # Wait for the instance to be ready first
+          env[:metrics]["instance_ready_time"] = Util::Timer.time do
+              tries = region_config.instance_ready_timeout / 2
 
-              env[:ui].info(I18n.t("vagrant_shell.waiting_for_ready"))
-              begin
-                retryable(:on => Shell::Errors::TimeoutError, :tries => tries) do
-                  # If we're interrupted don't worry about waiting
-                  next if env[:interrupted]
+            env[:ui].info(I18n.t("vagrant_shell.waiting_for_ready"))
+            begin
+              retryable(:on => Shell::Errors::TimeoutError, :tries => tries) do
+                # If we're interrupted don't worry about waiting
+                next if env[:interrupted]
 
-                  # Wait for the server to be ready
-                  server.wait_for(2) { ready? }
-                end
-              rescue Shell::Errors::TimeoutError
-                # Notify the user
-                raise Errors::InstanceReadyTimeout,
-                  timeout: region_config.instance_ready_timeout
+                # Wait for the server to be ready
+                server.wait_for(2) { ready? }
               end
+            rescue Shell::Errors::TimeoutError
+              # Notify the user
+              raise Errors::InstanceReadyTimeout,
+                timeout: region_config.instance_ready_timeout
             end
-          rescue Shell::Errors::Error => e
-            raise Errors::FogError, :message => e.message
           end
 
           @logger.info("Time to instance ready: #{env[:metrics]["instance_ready_time"]}")

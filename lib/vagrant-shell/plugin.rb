@@ -16,7 +16,7 @@ module VagrantPlugins
       name "Shell"
       description <<-DESC
       This plugin installs a provider that allows Vagrant to manage
-      machines in a cloud.
+      machines in a cloud with shell scripts.
       DESC
 
       config(:shell, :provider) do

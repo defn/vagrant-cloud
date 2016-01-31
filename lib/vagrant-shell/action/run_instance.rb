@@ -45,15 +45,7 @@ module VagrantPlugins
             :tags                      => tags
           }
 
-          begin
-            server = JSON.load(%x{vagrant-shell create-instance #{options}})
-          rescue Shell::Errors::Error => e
-            raise Errors::FogError, :message => e.message
-          rescue Excon::Errors::HTTPStatusError => e
-            raise Errors::InternalFogError,
-              :error => e.message,
-              :response => e.response.body
-          end
+          server = JSON.load(%x{vagrant-shell create-instance #{options}})
 
           # Immediately save the ID since it is created at this point.
           env[:machine].id = server.id
