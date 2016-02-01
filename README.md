@@ -33,7 +33,7 @@ Runs tests: `bundle _1.10.6_ exec rake`
     @version                   = UNSET_VALUE
 
 ### Environment Variables
-    @tags                      = {}
+    @env                       = {}
 
 ### Acknowledgments
 

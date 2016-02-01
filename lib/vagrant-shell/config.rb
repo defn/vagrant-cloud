@@ -59,10 +59,10 @@ module VagrantPlugins
       # @return [String]
       attr_accessor :session_token
 
-      # The tags for the machine.
+      # The env for the machine.
       #
       # @return [Hash<String, String>]
-      attr_accessor :tags
+      attr_accessor :env
 
       def initialize(region_specific=false)
         @access_key_id             = UNSET_VALUE
@@ -80,7 +80,7 @@ module VagrantPlugins
         @endpoint                  = UNSET_VALUE
         @version                   = UNSET_VALUE
 
-        @tags                      = {}
+        @env                       = {}
 
         # Internal state (prefix with __ so they aren't automatically
         # merged)
@@ -143,9 +143,9 @@ module VagrantPlugins
           # Set it
           result.instance_variable_set(:@__region_config, new_region_config)
 
-          # Merge in the tags
-          result.tags.merge!(self.tags)
-          result.tags.merge!(other.tags)
+          # Merge in the env
+          result.env.merge!(self.env)
+          result.env.merge!(other.env)
         end
       end
 

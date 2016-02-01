@@ -24,8 +24,8 @@ describe VagrantPlugins::Shell::Config do
     its("instance_type")     { should == "m3.medium" }
     its("region")            { should == "us-east-1" }
     its("secret_access_key") { should be_nil }
-    its("session_token") { should be_nil }
-    its("tags")              { should == {} }
+    its("session_token")     { should be_nil }
+    its("env")               { should == {} }
   end
 
   describe "overriding defaults" do
@@ -36,7 +36,7 @@ describe VagrantPlugins::Shell::Config do
     [:access_key_id, :ami, :availability_zone, :instance_ready_timeout,
       :instance_type,
       :region, :secret_access_key, :session_token,
-      :tags
+      :env
       ].each do |attribute|
 
       it "should not default #{attribute} if overridden" do
@@ -182,12 +182,12 @@ describe VagrantPlugins::Shell::Config do
       let(:first)  { described_class.new }
       let(:second) { described_class.new }
 
-      it "should merge the tags" do
-        first.tags["one"] = "one"
-        second.tags["two"] = "two"
+      it "should merge the env" do
+        first.env["one"] = "one"
+        second.env["two"] = "two"
 
         third = first.merge(second)
-        third.tags.should == {
+        third.env.should == {
           "one" => "one",
           "two" => "two"
         }

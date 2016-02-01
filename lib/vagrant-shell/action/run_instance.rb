@@ -29,7 +29,7 @@ module VagrantPlugins
           ami                   = region_config.ami
           availability_zone     = region_config.availability_zone
           instance_type         = region_config.instance_type
-          tags                  = region_config.tags
+          env                   = region_config.env
 
           # Launch!
           env[:ui].info(I18n.t("vagrant_shell.launching_instance"))
@@ -42,7 +42,7 @@ module VagrantPlugins
             :availability_zone         => availability_zone,
             :flavor_id                 => instance_type,
             :image_id                  => ami,
-            :tags                      => tags
+            :env                       => env
           }
 
           server = JSON.load(%x{vagrant-shell create-instance #{options}})
