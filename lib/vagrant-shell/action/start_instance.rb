@@ -3,6 +3,7 @@ require "log4r"
 require 'vagrant/util/retryable'
 
 require 'vagrant-shell/util/timer'
+require 'vagrant-shell/util/shell'
 
 module VagrantPlugins
   module Shell

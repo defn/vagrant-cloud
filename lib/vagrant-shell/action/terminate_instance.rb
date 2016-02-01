@@ -1,5 +1,6 @@
 require "log4r"
-require "json"
+
+require 'vagrant-shell/util/shell'
 
 module VagrantPlugins
   module Shell
