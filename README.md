@@ -19,10 +19,13 @@ Runs tests: `bundle _1.10.6_ exec rake`
     @session_token
 
 ### Launch Configuration
-    @ami                       = UNSET_VALUE
+    @image                     = UNSET_VALUE
     @instance_type             = UNSET_VALUE
     @region                    = UNSET_VALUE
     @availability_zone         = UNSET_VALUE
+
+### Environment Variables
+    @env                       = {}
 
 ### Timeouts
     @instance_check_interval   = UNSET_VALUE
@@ -31,9 +34,6 @@ Runs tests: `bundle _1.10.6_ exec rake`
 ### API
     @endpoint                  = UNSET_VALUE
     @version                   = UNSET_VALUE
-
-### Environment Variables
-    @env                       = {}
 
 ### Acknowledgments
 

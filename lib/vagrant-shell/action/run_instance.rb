@@ -26,7 +26,7 @@ module VagrantPlugins
 
           # Get the configs
           region_config         = env[:machine].provider_config.get_region_config(region)
-          ami                   = region_config.ami
+          image                 = region_config.image
           availability_zone     = region_config.availability_zone
           instance_type         = region_config.instance_type
           env                   = region_config.env
@@ -34,14 +34,14 @@ module VagrantPlugins
           # Launch!
           env[:ui].info(I18n.t("vagrant_shell.launching_instance"))
           env[:ui].info(" -- Type: #{instance_type}")
-          env[:ui].info(" -- AMI: #{ami}")
+          env[:ui].info(" -- Image: #{image}")
           env[:ui].info(" -- Region: #{region}")
           env[:ui].info(" -- Availability Zone: #{availability_zone}") if availability_zone
 
           options = {
             :availability_zone         => availability_zone,
             :flavor_id                 => instance_type,
-            :image_id                  => ami,
+            :image_id                  => image,
             :env                       => env
           }
 

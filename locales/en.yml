@@ -2,15 +2,15 @@ en:
   vagrant_aws:
     already_status: |-
       The machine is already %{status}.
-    burning_ami: |-
-      Waiting for the AMI '%{ami_id}' to burn...
+    burning_image: |-
+      Waiting for the image '%{image_id}' to burn...
 
     launching_instance: |-
       Launching an instance with the following settings...
     not_created: |-
       Instance is not created. Please run `vagrant up` first.
     packaging_instance: |-
-      Burning instance %{instance_id} into an ami
+      Burning instance %{instance_id} into an image
     packaging_instance_complete: |-
       Burn was successful in %{time_seconds}s
     ready: |-
@@ -44,8 +44,8 @@ en:
     config:
       access_key_id_required: |-
         An access key ID must be specified via "access_key_id"
-      ami_required: |-
-        An AMI must be configured via "ami" (region: #{region})
+      image_required: |-
+        An image must be configured via "image" (region: #{region})
       private_key_missing: |-
         The specified private key for AWS could not be found
       region_required: |-

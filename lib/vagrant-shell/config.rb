@@ -8,10 +8,10 @@ module VagrantPlugins
       # @return [String]
       attr_accessor :access_key_id
 
-      # The ID of the AMI to use.
+      # The ID of the image to use.
       #
       # @return [String]
-      attr_accessor :ami
+      attr_accessor :image
 
       # The availability zone to launch the instance into. If nil, it will
       # use the default for your account.
@@ -69,7 +69,7 @@ module VagrantPlugins
         @secret_access_key         = UNSET_VALUE
         @session_token             = UNSET_VALUE
 
-        @ami                       = UNSET_VALUE
+        @image                     = UNSET_VALUE
         @instance_type             = UNSET_VALUE
         @region                    = UNSET_VALUE
         @availability_zone         = UNSET_VALUE
@@ -92,10 +92,10 @@ module VagrantPlugins
 
       # Allows region-specific overrides of any of the settings on this
       # configuration object. This allows the user to override things like
-      # AMI for regions. Example:
+      # image for regions. Example:
       #
       #     cloud.region_config "us-east-1" do |region|
-      #       region.ami = "ami-12345678"
+      #       region.image = "id-12345678"
       #     end
       #
       # @param [String] region The region name to configure.
@@ -156,8 +156,8 @@ module VagrantPlugins
         @secret_access_key = ENV['CLOUD_SECRET_KEY'] if @secret_access_key == UNSET_VALUE
         @session_token     = ENV['CLOUD_SESSION_TOKEN'] if @session_token == UNSET_VALUE
 
-        # AMI must be nil, since we can't default that
-        @ami = nil if @ami == UNSET_VALUE
+        # image must be nil, since we can't default that
+        @image = nil if @image == UNSET_VALUE
 
         # Set the default timeout for waiting for an instance to be ready
         @instance_ready_timeout = 120 if @instance_ready_timeout == UNSET_VALUE
@@ -215,7 +215,7 @@ module VagrantPlugins
           errors << I18n.t("vagrant_shell.config.secret_access_key_required") if \
             config.secret_access_key.nil?
 
-          errors << I18n.t("vagrant_shell.config.ami_required", :region => @region)  if config.ami.nil?
+          errors << I18n.t("vagrant_shell.config.image_required", :region => @region)  if config.image.nil?
         end
 
         { "Shell Provider" => errors }

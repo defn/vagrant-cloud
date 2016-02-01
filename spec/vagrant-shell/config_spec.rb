@@ -17,7 +17,7 @@ describe VagrantPlugins::Shell::Config do
     end
 
     its("access_key_id")     { should be_nil }
-    its("ami")               { should be_nil }
+    its("image")             { should be_nil }
     its("availability_zone") { should be_nil }
     its("instance_ready_timeout") { should == 120 }
     its("instance_check_interval") { should == 2 }
@@ -33,7 +33,7 @@ describe VagrantPlugins::Shell::Config do
     # simple boilerplate test, so I cut corners here. It just sets
     # each of these attributes to "foo" in isolation, and reads the value
     # and asserts the proper result comes back out.
-    [:access_key_id, :ami, :availability_zone, :instance_ready_timeout,
+    [:access_key_id, :image, :availability_zone, :instance_ready_timeout,
       :instance_type,
       :region, :secret_access_key, :session_token,
       :env
@@ -81,7 +81,7 @@ describe VagrantPlugins::Shell::Config do
 
   describe "region config" do
     let(:config_access_key_id)     { "foo" }
-    let(:config_ami)               { "foo" }
+    let(:config_image)             { "foo" }
     let(:config_instance_type)     { "foo" }
     let(:config_region)            { "foo" }
     let(:config_secret_access_key) { "foo" }
@@ -89,7 +89,7 @@ describe VagrantPlugins::Shell::Config do
 
     def set_test_values(instance)
       instance.access_key_id     = config_access_key_id
-      instance.ami               = config_ami
+      instance.image             = config_image
       instance.instance_type     = config_instance_type
       instance.region            = config_region
       instance.secret_access_key = config_secret_access_key
@@ -114,7 +114,7 @@ describe VagrantPlugins::Shell::Config do
       end
 
       its("access_key_id")     { should == config_access_key_id }
-      its("ami")               { should == config_ami }
+      its("image")             { should == config_image }
       its("instance_type")     { should == config_instance_type }
       its("region")            { should == config_region }
       its("secret_access_key") { should == config_secret_access_key }
@@ -138,7 +138,7 @@ describe VagrantPlugins::Shell::Config do
       end
 
       its("access_key_id")     { should == config_access_key_id }
-      its("ami")               { should == config_ami }
+      its("image")             { should == config_image }
       its("instance_type")     { should == config_instance_type }
       its("region")            { should == region_name }
       its("secret_access_key") { should == config_secret_access_key }
@@ -151,12 +151,12 @@ describe VagrantPlugins::Shell::Config do
       subject do
         # Set the values on a specific region
         instance.region_config region_name do |config|
-          config.ami = "child"
+          config.image = "child"
         end
 
         # Set some top-level values
         instance.access_key_id = "parent"
-        instance.ami = "parent"
+        instance.image = "parent"
 
         # Finalize and get the region
         instance.finalize!
@@ -164,18 +164,18 @@ describe VagrantPlugins::Shell::Config do
       end
 
       its("access_key_id") { should == "parent" }
-      its("ami")           { should == "child" }
+      its("image")         { should == "child" }
     end
 
     describe "shortcut configuration" do
       subject do
         # Use the shortcut configuration to set some values
-        instance.region_config "us-east-1", :ami => "child"
+        instance.region_config "us-east-1", :image => "child"
         instance.finalize!
         instance.get_region_config("us-east-1")
       end
 
-      its("ami") { should == "child" }
+      its("image") { should == "child" }
     end
 
     describe "merging" do
