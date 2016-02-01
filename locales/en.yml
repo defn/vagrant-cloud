@@ -1,5 +1,5 @@
 en:
-  vagrant_aws:
+  vagrant_shell:
     already_status: |-
       The machine is already %{status}.
     burning_image: |-
