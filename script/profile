@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 
-function profile {
+function _vagrant_shell_profile {
   local shome="${_vagrant_shell_home:-"$(cd -P -- "${BASH_SOURCE%/*}/.." && pwd -P)"}"
   PATH="$shome/exec:$PATH"
 
   export VAGRANT_I_KNOW_WHAT_IM_DOING_PLEASE_BE_QUIET=1
 }
 
-profile
+_vagrant_shell_profile
